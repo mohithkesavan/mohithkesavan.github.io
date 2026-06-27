@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohith Kesavan — Backend &amp; Spatial Systems Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B0E0C;
+  --paper:#F2EEE3;
+  --paper-dim:#E9E4D4;
+  --survey-green:#3D5C44;
+  --survey-green-light:#5C7D63;
+  --copper:#C9712B;
+  --copper-bright:#E08A3E;
+  --sage:#7C8B7D;
+  --correction:#C24A33;
+  --line:rgba(11,14,12,0.14);
+  --line-strong:rgba(11,14,12,0.28);
+
+  --display:'Fraunces', serif;
+  --mono:'IBM Plex Mono', monospace;
+  --body:'Inter', sans-serif;
+
+  --maxw:1180px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+}
+
+a{color:inherit;}
+:focus-visible{outline:2px solid var(--copper); outline-offset:3px; border-radius:2px;}
+
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+
+/* ---------- Texture ---------- */
+.graticule{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:64px 64px;
+  opacity:0.35;
+  mask-image: radial-gradient(circle at 50% 0%, black 0%, transparent 75%);
+}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  background:rgba(242,238,227,0.86);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:var(--maxw); margin:0 auto; padding:18px 32px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{
+  font-family:var(--mono); font-size:13px; letter-spacing:0.08em;
+  display:flex; align-items:center; gap:10px;
+}
+.brand-mark{
+  width:9px; height:9px; border:1.5px solid var(--copper); border-radius:1px;
+  transform:rotate(45deg); flex-shrink:0;
+}
+.brand b{font-weight:600;}
+nav{display:flex; gap:28px; font-family:var(--mono); font-size:12.5px; letter-spacing:0.04em;}
+nav a{text-decoration:none; color:var(--ink); opacity:0.65; transition:opacity 0.2s;}
+nav a:hover{opacity:1;}
+@media (max-width:760px){ nav{display:none;} }
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative; z-index:1;
+  padding:168px 0 96px;
+  min-height:88vh;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.coord-tag{
+  font-family:var(--mono); font-size:12px; color:var(--survey-green);
+  letter-spacing:0.06em; margin-bottom:28px;
+  display:flex; align-items:center; gap:10px;
+}
+.coord-tag .dot{width:6px; height:6px; background:var(--copper); border-radius:50%; flex-shrink:0; animation:pulse 2.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.3;}}
+
+h1.title{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(42px, 6.4vw, 84px);
+  line-height:0.98; letter-spacing:-0.01em;
+  max-width:880px; color:var(--ink);
+}
+h1.title .accent{
+  color:var(--survey-green);
+  font-style:italic; font-weight:500;
+}
+.role-line{
+  font-family:var(--mono); font-size:15px; color:var(--ink); opacity:0.7;
+  margin-top:26px; max-width:620px; line-height:1.65;
+}
+.role-line strong{color:var(--copper); font-weight:600; opacity:1;}
+
+.hero-stats{
+  margin-top:56px;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line-strong);
+}
+.hero-stat{
+  padding:20px 22px 4px 0;
+  border-right:1px solid var(--line);
+}
+.hero-stat:last-child{border-right:none;}
+.hero-stat .n{
+  font-family:var(--mono); font-size:clamp(22px,2.6vw,30px); font-weight:600;
+  color:var(--ink); display:block; letter-spacing:-0.01em;
+}
+.hero-stat .l{
+  font-family:var(--mono); font-size:11px; color:var(--sage);
+  letter-spacing:0.03em; display:block; margin-top:6px; line-height:1.4;
+}
+@media (max-width:760px){
+  .hero-stats{grid-template-columns:repeat(2,1fr);}
+  .hero-stat{padding-bottom:18px;}
+  .hero-stat:nth-child(2){border-right:none;}
+}
+
+/* ---------- Section scaffolding ---------- */
+section{position:relative; z-index:1; padding:108px 0;}
+.section-head{
+  display:flex; align-items:baseline; gap:18px; margin-bottom:54px;
+  border-bottom:1px solid var(--line-strong); padding-bottom:22px;
+}
+.section-id{
+  font-family:var(--mono); font-size:12px; color:var(--copper); letter-spacing:0.05em; flex-shrink:0;
+}
+h2.section-title{
+  font-family:var(--display); font-size:clamp(28px,3.2vw,40px); font-weight:600; letter-spacing:-0.01em;
+}
+.section-note{
+  margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--sage); text-align:right; max-width:240px; line-height:1.5;
+  display:none;
+}
+@media (min-width:880px){ .section-note{display:block;} }
+
+/* ---------- Correction visual (signature element) ---------- */
+.correction-panel{
+  background:var(--ink); color:var(--paper);
+  border-radius:4px;
+  padding:36px 36px 28px;
+  position:relative; overflow:hidden;
+  margin-bottom:64px;
+}
+.correction-panel::before{
+  content:''; position:absolute; inset:0;
+  background-image:linear-gradient(rgba(242,238,227,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(242,238,227,0.06) 1px, transparent 1px);
+  background-size:32px 32px;
+}
+.correction-head{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:24px;
+  font-family:var(--mono); font-size:11.5px; letter-spacing:0.05em; color:var(--sage);
+  position:relative; z-index:1; margin-bottom:18px; flex-wrap:wrap;
+}
+.correction-head .stat{color:var(--copper-bright); font-weight:600;}
+#correction-svg{display:block; width:100%; height:auto; position:relative; z-index:1;}
+.correction-legend{
+  display:flex; gap:24px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--sage); margin-top:14px; position:relative; z-index:1;
+}
+.correction-legend span{display:inline-flex; align-items:center; gap:7px;}
+.swatch{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+
+/* ---------- Experience ---------- */
+.role{
+  border-bottom:1px solid var(--line);
+  padding:38px 0;
+  display:grid; grid-template-columns:240px 1fr; gap:40px;
+}
+.role:first-child{padding-top:0;}
+.role:last-child{border-bottom:none;}
+@media (max-width:780px){ .role{grid-template-columns:1fr; gap:14px;} }
+
+.role-meta{font-family:var(--mono); font-size:12.5px; color:var(--sage); line-height:1.7;}
+.role-meta .org{color:var(--ink); font-weight:600; display:block; margin-bottom:6px; font-size:13px;}
+.role-meta .period{color:var(--copper);}
+
+.role-title{
+  font-family:var(--display); font-size:21px; font-weight:600; margin-bottom:14px; color:var(--ink);
+}
+.role ul{list-style:none;}
+.role li{
+  position:relative; padding-left:20px; margin-bottom:11px; font-size:15px; line-height:1.6; color:rgba(11,14,12,0.86);
+}
+.role li::before{
+  content:'—'; position:absolute; left:0; color:var(--survey-green); font-family:var(--mono);
+}
+.role li .hl{font-family:var(--mono); font-weight:600; color:var(--correction); font-size:14px;}
+
+/* ---------- Projects ---------- */
+.projects-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line-strong); border:1px solid var(--line-strong);}
+@media (max-width:780px){ .projects-grid{grid-template-columns:1fr;} }
+.card{
+  background:var(--paper); padding:32px; display:flex; flex-direction:column;
+  transition:background 0.25s ease;
+}
+.card:hover{background:var(--paper-dim);}
+.card-index{font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.05em; margin-bottom:14px;}
+.card h3{font-family:var(--display); font-size:19px; font-weight:600; margin-bottom:10px; line-height:1.3;}
+.card-stack{font-family:var(--mono); font-size:10.5px; color:var(--sage); margin-bottom:16px; line-height:1.6; letter-spacing:0.02em;}
+.card p{font-size:14px; line-height:1.65; color:rgba(11,14,12,0.78); flex-grow:1;}
+.card .metric{
+  margin-top:16px; padding-top:14px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:12px; color:var(--survey-green); font-weight:600;
+}
+
+/* ---------- Skills ---------- */
+.skills-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:32px;}
+@media (max-width:900px){ .skills-grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:560px){ .skills-grid{grid-template-columns:1fr;} }
+.skill-group .sg-label{
+  font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.06em; margin-bottom:14px;
+  padding-bottom:10px; border-bottom:1px solid var(--line-strong);
+}
+.skill-group .sg-items{display:flex; flex-wrap:wrap; gap:7px;}
+.tag{
+  font-family:var(--mono); font-size:11.5px; padding:5px 10px;
+  border:1px solid var(--line-strong); border-radius:2px; color:rgba(11,14,12,0.78);
+  background:rgba(11,14,12,0.02);
+}
+
+/* ---------- Education / Awards ---------- */
+.eg-grid{display:grid; grid-template-columns:1.2fr 1fr; gap:56px;}
+@media (max-width:780px){ .eg-grid{grid-template-columns:1fr; gap:36px;} }
+.eg-block .eb-label{font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.06em; margin-bottom:18px;}
+.eg-item{padding:16px 0; border-bottom:1px solid var(--line);}
+.eg-item:last-child{border-bottom:none;}
+.eg-item .et{font-family:var(--display); font-weight:600; font-size:16px; margin-bottom:4px;}
+.eg-item .es{font-family:var(--mono); font-size:12px; color:var(--sage);}
+
+/* ---------- Contact / Footer ---------- */
+footer{
+  position:relative; z-index:1; background:var(--ink); color:var(--paper);
+  padding:96px 0 48px;
+}
+.footer-head{font-family:var(--display); font-weight:600; font-size:clamp(32px,4.4vw,52px); margin-bottom:32px; line-height:1.08; max-width:680px;}
+.footer-head .accent{color:var(--copper-bright); font-style:italic;}
+.contact-grid{display:flex; gap:48px; flex-wrap:wrap; margin-bottom:80px;}
+.contact-item{font-family:var(--mono); font-size:13px;}
+.contact-item .cl{display:block; color:var(--sage); font-size:11px; letter-spacing:0.05em; margin-bottom:8px;}
+.contact-item a{text-decoration:none; color:var(--paper); border-bottom:1px solid rgba(242,238,227,0.3); padding-bottom:2px; transition:border-color 0.2s;}
+.contact-item a:hover{border-color:var(--copper-bright);}
+.footer-bottom{
+  border-top:1px solid rgba(242,238,227,0.15); padding-top:24px;
+  display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; color:var(--sage); flex-wrap:wrap; gap:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="graticule" aria-hidden="true"></div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="brand-mark"></span><b>M. KESAVAN</b> / SPATIAL &amp; BACKEND SYS</div>
+    <nav>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero wrap">
+  <div class="coord-tag"><span class="dot"></span>11.0168° N, 76.9558° E — COIMBATORE, TAMIL NADU</div>
+  <h1 class="title">Backend systems that hold their <span class="accent">ground truth</span> at scale.</h1>
+  <p class="role-line">Software engineer specializing in <strong>spatial data migration</strong>, ETL architecture, and real-time AI pipelines — Node.js, Python, PostgreSQL/PostGIS. Two years turning legacy cadastral records and live audio streams into systems that don't drift.</p>
+
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="n">8,238,462</span><span class="l">CADASTRAL FEATURES<br>MIGRATED</span></div>
+    <div class="hero-stat"><span class="n">98.6%</span><span class="l">SPATIAL ACCURACY<br>POST-MIGRATION</span></div>
+    <div class="hero-stat"><span class="n">20+</span><span class="l">ENTERPRISE CLIENTS<br>SERVED IN PRODUCTION</span></div>
+    <div class="hero-stat"><span class="n">80ms</span><span class="l">ASR LATENCY,<br>REAL-TIME VOICE PIPELINE</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="correction">
+    <div class="correction-panel">
+      <div class="correction-head">
+        <div>VECTOR CORRECTION — CADASTRAL ANCHOR POINT<br>METHOD: ST_Translate + linear interpolation + azimuth deviation check</div>
+        <div>DEVIATION RESOLVED: <span class="stat">0.041m → 0.000m</span></div>
+      </div>
+      <svg id="correction-svg" viewBox="0 0 1080 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- grid lines -->
+        <g stroke="rgba(242,238,227,0.08)" stroke-width="1">
+          <line x1="0" y1="40" x2="1080" y2="40"/>
+          <line x1="0" y1="110" x2="1080" y2="110"/>
+          <line x1="0" y1="180" x2="1080" y2="180"/>
+        </g>
+        <!-- cadline path (ideal) -->
+        <path d="M 60 150 C 300 60, 700 60, 1020 150" stroke="#5C7D63" stroke-width="1.4" fill="none" stroke-dasharray="3 5" opacity="0.6"/>
+
+        <!-- mis-surveyed point and its drift vector -->
+        <circle cx="430" cy="40" r="5" fill="#C24A33" opacity="0.9">
+          <animate attributeName="opacity" values="0.9;0.35;0.9" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+        <line x1="430" y1="40" x2="468" y2="92" stroke="#C24A33" stroke-width="1.3" stroke-dasharray="2 4" opacity="0.7"/>
+
+        <!-- corrected point on the cadline, sits still -->
+        <circle cx="468" cy="92" r="6" fill="#E08A3E"/>
+        <circle cx="468" cy="92" r="11" fill="none" stroke="#E08A3E" stroke-width="1" opacity="0.5">
+          <animate attributeName="r" values="11;19;11" dur="2.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- validated anchor points along the cadline -->
+        <g fill="#5C7D63">
+          <circle cx="120" cy="138" r="3.5"/>
+          <circle cx="220" cy="106" r="3.5"/>
+          <circle cx="330" cy="76" r="3.5"/>
+          <circle cx="600" cy="68" r="3.5"/>
+          <circle cx="740" cy="80" r="3.5"/>
+          <circle cx="860" cy="108" r="3.5"/>
+          <circle cx="960" cy="136" r="3.5"/>
+        </g>
+
+        <!-- azimuth marker -->
+        <g font-family="IBM Plex Mono" font-size="10.5" fill="#7C8B7D">
+          <text x="490" y="60">az Δ 2.3°</text>
+          <text x="60" y="172">P1</text>
+          <text x="980" y="172">Pn</text>
+        </g>
+      </svg>
+      <div class="correction-legend">
+        <span><span class="swatch" style="background:#5C7D63"></span>validated anchor</span>
+        <span><span class="swatch" style="background:#C24A33"></span>pre-migration position</span>
+        <span><span class="swatch" style="background:#E08A3E"></span>corrected, on cadline</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="section-head">
+      <span class="section-id">01 / LOG</span>
+      <h2 class="section-title">Experience</h2>
+      <span class="section-note">Two roles, one employer — backend systems work and a standalone spatial migration carried solo for 18 months.</span>
+    </div>
+
+    <div class="role">
+      <div class="role-meta">
+        <span class="org">Creo Systems Pvt. Ltd.</span>
+        Coimbatore, Tamil Nadu, India<br>
+        <span class="period">FEB 2023 — PRESENT</span>
+      </div>
+      <div>
+        <div class="role-title">Spatial Data Analyst</div>
+        <ul>
+          <li>Sole engineer on the <span class="hl">Digital Cadastral Modernization (DCM)</span> project — designed and delivered a full spatial data migration pipeline over 18 months across 3 feature dumps and 4 landbase dumps.</li>
+          <li>Migrated <span class="hl">8,238,462</span> cadastral features, including 7,703,682 anchor points and 802,769 property polygons (11,515,565 coordinates), reaching <span class="hl">98.6%</span> spatial accuracy post-migration.</li>
+          <li>Applied linear interpolation for point prediction along cadlines and ST_Translate for Euclidean vector shifting to correct coordinate positions across 7M+ validated records.</li>
+          <li>Used azimuth angle calculation to detect and correct angular deviation in line feature alignment during vector shifting.</li>
+          <li>Built and ran ETL pipelines across Oracle, PostgreSQL, and SQLite from JSON, CSV, and shapefile sources, with property-level attribute and spatial validation throughout.</li>
+          <li>Delivered initial deployment and full dataset testing within 4 months, followed by 2 months of incremental processing and pilot-area validation using PostGIS, Oracle Spatial, and QGIS.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role">
+      <div class="role-meta">
+        <span class="org">Creo Systems Pvt. Ltd.</span>
+        Coimbatore, Tamil Nadu, India<br>
+        <span class="period">FEB 2023 — PRESENT</span>
+      </div>
+      <div>
+        <div class="role-title">Backend Developer</div>
+        <ul>
+          <li>Developed analytics reporting features and core modules (audit, ledger) for a Club Management System serving <span class="hl">20+</span> clients with 500+ players each, using Node.js and PostgreSQL.</li>
+          <li>Designed DataSync with 1-minute interval synchronization, capping maximum data loss at 1 minute in failure scenarios and ensuring high availability across all client deployments.</li>
+          <li>Implemented asynchronous programming techniques to improve system responsiveness and scalability across multiple client deployments within a legacy codebase.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-head">
+      <span class="section-id">02 / BUILDS</span>
+      <h2 class="section-title">Projects &amp; Open Source</h2>
+      <span class="section-note">Independent builds spanning real-time AI, computer vision, and automation.</span>
+    </div>
+
+    <div class="projects-grid">
+      <div class="card">
+        <div class="card-index">P.01</div>
+        <h3>Real-Time Voice AI Pipeline</h3>
+        <div class="card-stack">NeMo · FastConformer Hybrid Streaming · VITS · Llama 3.2 1B · NLTK · CUDA</div>
+        <p>End-to-end speech pipeline: NeMo's FastConformer with cache-aware streaming for ASR, NLTK-based sentence segmentation to chunk text for LLM inference, VITS for single-pass text-to-waveform synthesis, and a custom inference loop for Llama 3.2 1B handling tokenization, KV caching, and autoregressive generation without a serving framework.</p>
+        <div class="metric">80ms ASR latency · hybrid CTC+attention decoding</div>
+      </div>
+
+      <div class="card">
+        <div class="card-index">P.02</div>
+        <h3>OCR Extraction with Custom Font Fine-Tuning</h3>
+        <div class="card-stack">Tesseract 4 (LSTM) · Pillow · OpenCV</div>
+        <p>Fine-tuned Tesseract 4's LSTM engine on a synthetic dataset generated with PIL and augmented in OpenCV to simulate lighting, noise, and skew — built specifically to extract accurate text from the decorative FrenchScriptMT typeface.</p>
+        <div class="metric">Accuracy beyond default model on stylized fonts</div>
+      </div>
+
+      <div class="card">
+        <div class="card-index">P.03</div>
+        <h3>Automated Video Segment Editor &amp; Exporter</h3>
+        <div class="card-stack">OpenCV · FFmpeg · MoviePy · JSON</div>
+        <p>A JSON-manifest-driven editing pipeline: per-segment audio handling (original or voiceover), selective audio retention, seamless joins across segments with boundary normalization, and configurable export format/FPS with synchronized voiceover mixing.</p>
+        <div class="metric">Manifest-driven, artifact-free transitions</div>
+      </div>
+
+      <div class="card">
+        <div class="card-index">P.04</div>
+        <h3>Multi-Strategy Web Scraper</h3>
+        <div class="card-stack">Requests · Selenium · GeckoDriver · BeautifulSoup · PostgreSQL</div>
+        <p>Robust scraping pipeline switching between Requests, urllib3, and wget with retry/fallback handling, Selenium + GeckoDriver to simulate real browser sessions against bot detection, and BeautifulSoup parsing with both automated and manual CSS/XPath extraction.</p>
+        <div class="metric">Scheduled nightly at 12 AM, persisted to PostgreSQL</div>
+      </div>
+
+      <div class="card">
+        <div class="card-index">P.05</div>
+        <h3>TTS PDF Reader with Playback Controls</h3>
+        <div class="card-stack">Tkinter · PyPDF · NeMo VITS · pyttsx3</div>
+        <p>Desktop PDF reader extracting text via PyPDF and synthesizing speech through NVIDIA NeMo's VITS model, with pyttsx3 + Microsoft Neural Voices as an alternate engine, adjustable playback speed, and per-page navigation.</p>
+        <div class="metric">Dual TTS engines, non-linear navigation</div>
+      </div>
+
+      <div class="card">
+        <div class="card-index">P.06</div>
+        <h3>DataSync — High-Availability Replication</h3>
+        <div class="card-stack">Node.js · PostgreSQL · Async I/O</div>
+        <p>A synchronization layer running on 1-minute intervals across client deployments of a multi-tenant club management system, bounding worst-case data loss in a failure scenario to a single minute while staying responsive under legacy-codebase constraints.</p>
+        <div class="metric">≤1 min data-loss ceiling, 20+ live deployments</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-head">
+      <span class="section-id">03 / STACK</span>
+      <h2 class="section-title">Skills</h2>
+      <span class="section-note">Grouped by what they're for, not just what they are.</span>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="sg-label">LANGUAGES</div>
+        <div class="sg-items">
+          <span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">Node.js</span>
+          <span class="tag">Java</span><span class="tag">C/C++</span><span class="tag">SQL</span><span class="tag">Bash</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-label">SPATIAL &amp; GIS</div>
+        <div class="sg-items">
+          <span class="tag">PostGIS</span><span class="tag">Oracle Spatial</span><span class="tag">QGIS</span>
+          <span class="tag">GeoJSON</span><span class="tag">Spatial Queries</span><span class="tag">Coordinate Systems</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-label">BACKEND &amp; APIs</div>
+        <div class="sg-items">
+          <span class="tag">Express.js</span><span class="tag">Flask</span><span class="tag">FastAPI</span>
+          <span class="tag">REST</span><span class="tag">GraphQL</span><span class="tag">WebSockets</span>
+          <span class="tag">OAuth</span><span class="tag">Microservices</span><span class="tag">Redis</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-label">AI / ML / AUDIO</div>
+        <div class="sg-items">
+          <span class="tag">PyTorch</span><span class="tag">NVIDIA NeMo</span><span class="tag">CUDA</span>
+          <span class="tag">ASR / TTS</span><span class="tag">FastConformer</span><span class="tag">VITS</span><span class="tag">Llama Inference</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-label">DATABASES</div>
+        <div class="sg-items">
+          <span class="tag">PostgreSQL</span><span class="tag">Oracle</span><span class="tag">SQLite</span>
+          <span class="tag">MySQL</span><span class="tag">Redis</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-label">DATA &amp; CV</div>
+        <div class="sg-items">
+          <span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">ETL Pipelines</span>
+          <span class="tag">OpenCV</span><span class="tag">Tesseract 4</span><span class="tag">NLTK</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-label">AUTOMATION</div>
+        <div class="sg-items">
+          <span class="tag">Selenium</span><span class="tag">Playwright</span><span class="tag">BeautifulSoup</span>
+          <span class="tag">FFmpeg</span><span class="tag">MoviePy</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-label">PLATFORMS &amp; OPS</div>
+        <div class="sg-items">
+          <span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Linux</span>
+          <span class="tag">Nginx</span><span class="tag">CI/CD</span><span class="tag">Git</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="section-head">
+      <span class="section-id">04 / RECORD</span>
+      <h2 class="section-title">Education &amp; Honors</h2>
+    </div>
+
+    <div class="eg-grid">
+      <div class="eg-block">
+        <div class="eb-label">EDUCATION</div>
+        <div class="eg-item">
+          <div class="et">B.E. Computer Science and Engineering</div>
+          <div class="es">RVS College of Engineering and Technology, Anna University · CGPA 7.8 · June 2019 — June 2023</div>
+        </div>
+        <div class="eg-item">
+          <div class="et">SQL (Advanced) Certificate</div>
+          <div class="es">HackerRank</div>
+        </div>
+        <div class="eg-item">
+          <div class="et">Information and Communication Technology</div>
+          <div class="es">Tamil Nadu Newsprint and Papers Limited</div>
+        </div>
+      </div>
+      <div class="eg-block">
+        <div class="eb-label">HONORS &amp; LEADERSHIP</div>
+        <div class="eg-item">
+          <div class="et">Student President</div>
+          <div class="es">CSE Incubation Cell, RVS College of Engineering and Technology · 2021—2023</div>
+        </div>
+        <div class="eg-item">
+          <div class="et">Student Secretary</div>
+          <div class="es">Dept. of Computer Science and Engineering, RVS College of Engineering and Technology · 2021—2023</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-head">Let's correct some <span class="accent">coordinates</span>, or ship something real-time.</div>
+    <div class="contact-grid">
+      <div class="contact-item"><span class="cl">EMAIL</span><a href="mailto:mohithkesavan@icloud.com">mohithkesavan@icloud.com</a></div>
+      <div class="contact-item"><span class="cl">PHONE</span><a href="tel:+919361017103">+91 93610 17103</a></div>
+      <div class="contact-item"><span class="cl">LOCATION</span>Coimbatore, Tamil Nadu, India</div>
+      <div class="contact-item"><span class="cl">PROFILES</span><a href="#" onclick="return false;">GitHub</a> &nbsp;·&nbsp; <a href="#" onclick="return false;">LinkedIn</a> &nbsp;·&nbsp; <a href="#" onclick="return false;">HackerRank</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>MOHITH KESAVAN — SOFTWARE ENGINEER</span>
+      <span>BUILT 2026 / GRID REF 11.0168°N 76.9558°E</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
