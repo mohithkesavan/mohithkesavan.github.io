@@ -12,13 +12,15 @@
   --void:#0A0A0A;
   --panel:#101210;
   --panel-2:#151715;
+  --topbar-bg:rgba(10,10,10,0.88);
   --red:#FF3B30;
   --red-bright:#FF6B5C;
   --red-dim:#5C1812;
   --green:#3ECF6A;
   --text:#D8DAD5;
-  --text-dim:#7A8079;
-  --text-faint:#454A45;
+  --text-dim:#9CA199;
+  --text-faint:#8A9088;
+  --decor-dim:#3A3F3A;
   --line:rgba(216,218,213,0.10);
   --line-strong:rgba(216,218,213,0.22);
 
@@ -26,6 +28,27 @@
   --display:'JetBrains Mono', monospace;
 
   --maxw:1180px;
+
+  color-scheme: dark;
+}
+
+html[data-theme="light"]{
+  --void:#F4F2EC;
+  --panel:#FFFFFF;
+  --panel-2:#ECEAE2;
+  --topbar-bg:rgba(244,242,236,0.90);
+  --red:#C8281C;
+  --red-bright:#A31F15;
+  --red-dim:#F4D8D4;
+  --green:#1F8A47;
+  --text:#15170F;
+  --text-dim:#4B4F46;
+  --text-faint:#6E726A;
+  --decor-dim:#9A9E94;
+  --line:rgba(21,23,15,0.12);
+  --line-strong:rgba(21,23,15,0.26);
+
+  color-scheme: light;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -37,6 +60,13 @@ body{
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
+  transition:background-color 0.3s ease, color 0.3s ease;
+}
+
+html[data-theme="light"] .scanlines,
+html[data-theme="light"] .vignette,
+html[data-theme="light"] .crt-flicker{
+  opacity:0;
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -78,9 +108,10 @@ a{color:inherit;}
 /* ---------- Top bar ---------- */
 .topbar{
   position:fixed; top:0; left:0; right:0; z-index:50;
-  background:rgba(10,10,10,0.88);
+  background:var(--topbar-bg);
   backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line);
+  transition:background-color 0.3s ease;
 }
 .topbar-inner{
   max-width:var(--maxw); margin:0 auto; padding:16px 32px;
@@ -98,9 +129,36 @@ a{color:inherit;}
 @keyframes blink{0%,50%{opacity:1;} 50.01%,100%{opacity:0;}}
 nav{display:flex; gap:26px; font-size:12.5px;}
 nav a{text-decoration:none; color:var(--text-dim); transition:color 0.2s;}
-nav a::before{content:'./'; color:var(--text-faint);}
+nav a::before{content:'./'; color:var(--decor-dim);}
 nav a:hover{color:var(--red-bright);}
 @media (max-width:760px){ nav{display:none;} }
+
+.topbar-actions{display:flex; align-items:center; gap:26px;}
+
+.theme-toggle{
+  display:flex; align-items:center; gap:9px;
+  background:none; border:none; cursor:pointer; padding:4px 2px;
+  font-family:var(--mono); font-size:11px; letter-spacing:0.03em; color:var(--text-faint);
+}
+.theme-toggle:hover{ color:var(--text-dim); }
+.tt-track{
+  width:34px; height:18px; border-radius:9px; border:1px solid var(--line-strong);
+  background:var(--panel-2); position:relative; flex-shrink:0; transition:background 0.25s, border-color 0.25s;
+}
+.tt-thumb{
+  position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:50%;
+  background:var(--red); transition:transform 0.25s ease, background 0.25s ease;
+}
+html[data-theme="light"] .tt-thumb{ transform:translateX(16px); }
+.tt-label{ width:32px; text-align:left; }
+
+.print-btn{
+  background:none; border:1px solid var(--line-strong); border-radius:2px; cursor:pointer;
+  padding:6px 10px; font-family:var(--mono); font-size:11px; letter-spacing:0.02em;
+  color:var(--text-faint); transition:border-color 0.2s, color 0.2s;
+}
+.print-btn:hover{ border-color:var(--red); color:var(--red-bright); }
+@media (max-width:760px){ .print-btn .pb-full{display:none;} }
 
 /* ---------- Hero ---------- */
 .hero{
@@ -126,7 +184,7 @@ h1.title{
   max-width:920px; color:var(--text);
 }
 h1.title .accent{ color:var(--red); }
-h1.title .bracket{ color:var(--text-faint); font-weight:400; }
+h1.title .bracket{ color:var(--decor-dim); font-weight:400; }
 
 .role-line{
   font-size:15px; color:var(--text-dim);
@@ -149,7 +207,7 @@ h1.title .bracket{ color:var(--text-faint); font-weight:400; }
   color:var(--red); display:block; letter-spacing:-0.01em;
 }
 .hero-stat .l{
-  font-size:11px; color:var(--text-faint);
+  font-size:11px; color:var(--text-dim);
   letter-spacing:0.02em; display:block; margin-top:6px; line-height:1.4;
 }
 @media (max-width:760px){
@@ -233,7 +291,7 @@ h2.section-title{
   position:relative; padding-left:22px; margin-bottom:11px; font-size:14.5px; line-height:1.65; color:var(--text-dim);
 }
 .role li::before{
-  content:'-'; position:absolute; left:4px; color:var(--text-faint);
+  content:'-'; position:absolute; left:4px; color:var(--decor-dim);
 }
 .role li .hl{font-weight:700; color:var(--red-bright); font-size:14px;}
 
@@ -267,10 +325,12 @@ h2.section-title{
 .skill-group .sg-label::before{content:'# ';}
 .skill-group .sg-items{display:flex; flex-wrap:wrap; gap:7px;}
 .tag{
+  display:inline-flex; margin:0 2px 4px 0;
   font-size:11.5px; padding:5px 10px;
   border:1px solid var(--line-strong); border-radius:2px; color:var(--text-dim);
   background:rgba(255,255,255,0.015);
   transition:border-color 0.2s, color 0.2s;
+  white-space:nowrap;
 }
 .tag:hover{border-color:var(--red); color:var(--red-bright);}
 
@@ -301,8 +361,106 @@ footer{
   border-top:1px solid var(--line); padding-top:24px;
   display:flex; justify-content:space-between; font-size:11px; color:var(--text-faint); flex-wrap:wrap; gap:10px;
 }
+
+/* ---------- Print ---------- */
+@media print{
+  *, *::before, *::after{
+    animation:none !important;
+    transition:none !important;
+    box-shadow:none !important;
+    text-shadow:none !important;
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
+
+  .skills-grid{ grid-template-columns:repeat(2,1fr) !important; gap:18px !important; }
+  .skill-group{ page-break-inside:avoid; margin-bottom:14px; }
+
+  html, body{
+    background:#FFFFFF !important;
+    color:#111111 !important;
+  }
+
+  .scanlines, .vignette, .crt-flicker, .graticule{ display:none !important; }
+
+  .topbar{
+    position:static !important; backdrop-filter:none !important; background:#FFFFFF !important;
+    border-bottom:1px solid #999;
+  }
+  .topbar nav, .theme-toggle, .print-btn, .cursor{ display:none !important; }
+  .brand{ color:#111 !important; }
+  .brand b{ color:#000 !important; }
+
+  .hero{ min-height:0; padding:24px 0 28px; }
+  .boot-line, .prompt-tag{ display:none !important; }
+  h1.title{ color:#000 !important; font-size:30px; }
+  h1.title .accent{ color:#000 !important; text-decoration:underline; }
+  h1.title .bracket{ color:#444 !important; }
+  .role-line{ color:#222 !important; }
+  .role-line strong{ color:#000 !important; }
+
+  .hero-stats{ border-top:1px solid #999; }
+  .hero-stat{ border-right:1px solid #ccc; padding-bottom:10px; }
+  .hero-stat .n{ color:#000 !important; }
+  .hero-stat .l{ color:#333 !important; }
+
+  section{ padding:26px 0; }
+  .section-head{ border-bottom:1px solid #999; margin-bottom:22px; padding-bottom:10px; }
+  .section-id{ color:#000 !important; }
+  .section-note{ display:none !important; }
+  h2.section-title{ color:#000 !important; }
+
+  .correction-panel{
+    background:#fff !important; border:1px solid #999 !important; page-break-inside:avoid;
+  }
+  .panel-titlebar{ background:#f0f0f0 !important; border-bottom:1px solid #ccc; }
+  .panel-dot{ background:#bbb !important; box-shadow:none !important; }
+  .correction-head{ color:#333 !important; }
+  .correction-head .stat{ color:#000 !important; font-weight:700; }
+  .correction-legend{ color:#333 !important; }
+
+  .role{ border-bottom:1px solid #ccc; page-break-inside:avoid; padding:18px 0; }
+  .role-meta{ color:#333 !important; }
+  .role-meta .org{ color:#000 !important; }
+  .role-meta .period{ color:#000 !important; font-weight:700; }
+  .role-title{ color:#000 !important; }
+  .role-title::before{ color:#000 !important; }
+  .role li{ color:#222 !important; }
+  .role li .hl{ color:#000 !important; }
+
+  .projects-grid{ background:#ccc !important; border:1px solid #ccc !important; grid-template-columns:1fr !important; }
+  .card{ background:#fff !important; page-break-inside:avoid; }
+  .card:hover{ background:#fff !important; box-shadow:none !important; }
+  .card-index, .card-stack{ color:#444 !important; }
+  .card h3{ color:#000 !important; }
+  .card p{ color:#222 !important; }
+  .card .metric{ color:#000 !important; border-top:1px solid #ccc; }
+  .card .metric::before{ color:#444 !important; }
+
+  #correction-svg{ filter:grayscale(1) contrast(1.3); }
+
+  .skill-group .sg-label{ color:#000 !important; border-bottom:1px solid #999; }
+  .tag{ border:1px solid #999 !important; color:#111 !important; background:#fff !important; }
+
+  .eg-item{ border-bottom:1px solid #ccc; page-break-inside:avoid; }
+  .eg-block .eb-label{ color:#000 !important; }
+  .eg-item .et{ color:#000 !important; }
+  .eg-item .es{ color:#333 !important; }
+
+  footer{ background:#fff !important; border-top:1px solid #999; padding:30px 0 18px; }
+  .footer-head{ color:#000 !important; font-size:24px; }
+  .footer-head .accent{ color:#000 !important; }
+  .contact-item .cl{ color:#444 !important; }
+  .contact-item a{ color:#000 !important; border-bottom:1px solid #999; }
+  .footer-bottom{ border-top:1px solid #ccc; color:#444 !important; }
+
+  a{ text-decoration:none !important; }
+  .wrap{ padding:0 12px; }
+  section, footer{ page-break-after:auto; }
+}
 </style>
 </head>
+
 <body>
 
 <div class="vignette" aria-hidden="true"></div>
@@ -312,12 +470,19 @@ footer{
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand"><b>mohith@kesavan</b>:~/portfolio$<span class="cursor"></span></div>
-    <nav>
-      <a href="#experience">experience</a>
-      <a href="#projects">projects</a>
-      <a href="#skills">skills</a>
-      <a href="#contact">contact</a>
-    </nav>
+    <div class="topbar-actions">
+      <nav>
+        <a href="#experience">experience</a>
+        <a href="#projects">projects</a>
+        <a href="#skills">skills</a>
+        <a href="#contact">contact</a>
+      </nav>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch between dark and light mode" title="Switch theme">
+        <span class="tt-track"><span class="tt-thumb"></span></span>
+        <span class="tt-label" id="theme-toggle-label">dark</span>
+      </button>
+      <button id="print-btn" class="print-btn" type="button" aria-label="Print this page" title="Print this page">[ print ]</button>
+    </div>
   </div>
 </div>
 
@@ -612,6 +777,9 @@ footer{
       <div class="contact-item"><span class="cl">PHONE</span><a href="tel:+919361017103">+91 93610 17103</a></div>
       <div class="contact-item"><span class="cl">LOCATION</span>Coimbatore, Tamil Nadu, India</div>
       <div class="contact-item"><span class="cl">PROFILES</span><a href="#" onclick="return false;">GitHub</a> &nbsp;·&nbsp; <a href="#" onclick="return false;">LinkedIn</a> &nbsp;·&nbsp; <a href="#" onclick="return false;">HackerRank</a></div>
+      <div class="contact-item"><span class="cl">RESUME</span><a href="assets/Mohith_Resume_08062026.pdf" download>download PDF &darr;</a></div>
+
+      
     </div>
     <div class="footer-bottom">
       <span>MOHITH KESAVAN — SOFTWARE ENGINEER</span>
@@ -619,6 +787,47 @@ footer{
     </div>
   </div>
 </footer>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var toggle = document.getElementById('theme-toggle');
+  var label = document.getElementById('theme-toggle-label');
+
+  function applyTheme(theme){
+    if(theme === 'light'){
+      root.setAttribute('data-theme', 'light');
+      label.textContent = 'light';
+    } else {
+      root.removeAttribute('data-theme');
+      label.textContent = 'dark';
+    }
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem('portfolio-theme'); } catch(e) {}
+
+  if(saved === 'light' || saved === 'dark'){
+    applyTheme(saved);
+  } else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
+    applyTheme('light');
+  } else {
+    applyTheme('dark');
+  }
+
+  toggle.addEventListener('click', function(){
+    var current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    var next = current === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem('portfolio-theme', next); } catch(e) {}
+  });
+
+  var printBtn = document.getElementById('print-btn');
+  if(printBtn){
+    printBtn.addEventListener('click', function(){ window.print(); });
+  }
+})();
+</script>
 
 </body>
 </html>
